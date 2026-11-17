@@ -35,6 +35,7 @@ Most content is taken from the other DURF sites when the slides load, so it stay
 | Central aim, strategic commitments | `position-paper/position-paper.md` (the *STRATEGIC* bullet of each theme) |
 | Information chain | `position-paper/assets/durf-information-chain.svg` |
 | Project board and team | the project page section "The federation and its circles", embedded (`?embed&only=federation`); clicking a circle shows the people from `project-page/content/people.json` |
+| Roadmap (after Maurice's intro) | the DURF project plan, `durf-gantt/gantt.html?embed` |
 | Theme leads | the design system (`window.DURF.themes`), photos from `people.json` |
 | Theme carousel | the opening poster, `durf-gantt/posters/?theme=0&embed` |
 
