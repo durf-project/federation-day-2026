@@ -162,6 +162,40 @@
   }
   function next() { if (step < stepsOf(slides[cur])) { step++; render(); } else go(cur + 1, 0); }
   function prev() { if (step > 0) { step--; render(); } else go(cur - 1, "end"); }
+  /* ---- slide overview: thumbnails per part of the programme ---- */
+  var PARTS = { lunch: "12:00 · Lunch", opening: "12:45 · Opening, John Doove", hilde: "13:05 · The strategic importance of DURF, Hilde van Wijngaarden",
+    maurice: "13:25 · The DURF project plan, Maurice Vanderfeesten", carousel: "13:45 · Deep dive into the six work packages",
+    keynote: "15:15 · Keynote, Jeroen Bosman", drinks: "16:00 · Drinks" };
+  function overview() {
+    var dlg = document.getElementById("deck-nav"), body = dlg.querySelector(".deck-nav__body"), html = [], last = null;
+    body.innerHTML = "";
+    slides.forEach(function (s, i) {
+      var part = s.dataset.agenda || "";
+      if (part !== last) {
+        var h = document.createElement("h3"); h.textContent = PARTS[part] || part; body.appendChild(h);
+        var grid = document.createElement("div"); grid.className = "deck-nav__grid"; body.appendChild(grid); last = part;
+      }
+      var btn = document.createElement("button");
+      btn.type = "button"; btn.className = "deck-nav__item" + (i === cur ? " is-current" : "");
+      btn.setAttribute("aria-label", "Slide " + (i + 1) + (s.querySelector("h1, h2") ? ": " + s.querySelector("h1, h2").textContent : ""));
+      var frame = document.createElement("span"); frame.className = "deck-nav__thumb";
+      var c = s.cloneNode(true);
+      c.removeAttribute("id"); c.classList.add("is-current"); c.setAttribute("aria-hidden", "true"); c.style.removeProperty("--scale");
+      Array.prototype.forEach.call(c.querySelectorAll("[id]"), function (el) { el.removeAttribute("id"); });
+      Array.prototype.forEach.call(c.querySelectorAll("[data-step]"), function (el) { el.classList.add("is-shown"); });
+      Array.prototype.forEach.call(c.querySelectorAll("iframe"), function (f) {
+        var ph = document.createElement("div"); ph.className = "deck-nav__embed"; ph.textContent = f.title; f.replaceWith(ph);
+      });
+      frame.appendChild(c);
+      var n = document.createElement("span"); n.className = "deck-nav__n"; n.textContent = i + 1;
+      btn.appendChild(frame); btn.appendChild(n);
+      btn.addEventListener("click", function () { dlg.close(); go(i, 0); });
+      body.lastChild.appendChild(btn);
+    });
+    dlg.showModal();
+    var curBtn = body.querySelector(".is-current"); if (curBtn) curBtn.scrollIntoView({ block: "center" });
+  }
+
   function full() { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen && root.requestFullscreen(); }
 
   function key(k, e) {
@@ -170,6 +204,7 @@
     if (k === "Home") { go(0); return true; }
     if (k === "End") { go(slides.length - 1); return true; }
     if (k === "f" || k === "F") { full(); return true; }
+    if (k === "o" || k === "O") { overview(); return true; }
     return false;
   }
   document.addEventListener("keydown", function (e) {
@@ -183,7 +218,7 @@
   /* keys pressed inside an embedded DURF page come back as messages (design system 1.1.10) */
   window.addEventListener("message", function (e) { if (e.data && e.data.type === "durf-embed-key") key(e.data.key); });
   $$(".deck-ui [data-go]").forEach(function (b) {
-    b.addEventListener("click", function () { ({ prev: prev, next: next, full: full })[b.dataset.go](); b.blur(); });
+    b.addEventListener("click", function () { ({ prev: prev, next: next, full: full, nav: overview })[b.dataset.go](); b.blur(); });
   });
   window.addEventListener("resize", scale);
   /* a typed or linked #number jumps to that slide */
