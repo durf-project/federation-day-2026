@@ -28,7 +28,43 @@
     if (ch) ch.onmessage = function (e) { subs.forEach(function (f) { f(e.data); }); };
     return { live: false, publish: function (m) { if (ch) ch.postMessage(m); }, subscribe: function (f) { subs.push(f); } };
   }
-  var bus = (window.DURF_DAY_BUS) || demoBus();   // a live bus can be set as window.DURF_DAY_BUS before quiz.js
+  /* Live: ntfy (https://docs.ntfy.sh). Two topics: <topic>-state (slides -> phones) and
+     <topic>-answers (phones -> slides). Each side only listens to the topic it needs; a phone that
+     opens the page late gets the last state from the server's cache (since=latest). */
+  function ntfyBus(server, topic, presenter) {
+    var base = String(server || "https://ntfy.sh").replace(/\/+$/, "") + "/", subs = [], status = "connecting";
+    var tState = topic + "-state", tAnswers = topic + "-answers";
+    var listenTo = presenter ? tAnswers : tState;
+    function connect() {
+      var es = new EventSource(base + listenTo + "/sse" + (presenter ? "" : "?since=latest"));
+      es.onopen = function () { status = "connected"; };
+      es.onmessage = function (e) {
+        try {
+          var m = JSON.parse(e.data);
+          if (m.event && m.event !== "message") return;
+          var d = JSON.parse(m.message);
+          subs.forEach(function (f) { f(d); });
+        } catch (x) {}
+      };
+      es.onerror = function () { status = "reconnecting"; };   // EventSource reconnects by itself
+    }
+    connect();
+    return {
+      live: true,
+      state: function () { return status; },
+      publish: function (m) {
+        var t = m.t === "state" ? tState : tAnswers;
+        if (m.t === "hello") return;                    // not needed: the last state comes from the cache
+        if (presenter !== (m.t === "state")) return;    // each side only publishes its own kind
+        fetch(base + t, { method: "POST", body: JSON.stringify(m) }).catch(function () {});
+      },
+      subscribe: function (f) { subs.push(f); }
+    };
+  }
+  var mode = (new URLSearchParams(location.search).get("quiz") || CFG.QUIZ_BACKEND || "demo").toLowerCase();
+  var presenterSide = location.hash !== "#quiz";
+  var bus = window.DURF_DAY_BUS ||
+    (mode === "ntfy" && CFG.NTFY_TOPIC && "EventSource" in window ? ntfyBus(CFG.NTFY_SERVER, CFG.NTFY_TOPIC, presenterSide) : demoBus());
 
   var store = {
     get: function (k, d) { try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
@@ -112,6 +148,12 @@
     leave: function () { if (state.q != null) setState(null, false); }
   };
   document.addEventListener("keydown", function (e) {
+    /* Shift+R on a quiz slide: clear all answers (e.g. after a rehearsal) */
+    if (e.key === "R" && e.shiftKey && state.q != null && window.confirm("Clear all quiz answers in this browser?")) {
+      answers = {}; store.set("durf-day-answers", answers);
+      questions.forEach(function (q, i) { updateSlide(i); });
+      return;
+    }
     if ((e.key === "d" || e.key === "D") && !bus.live && state.q != null && state.open) {
       var n = questions[state.q].choices.length;
       for (var i = 0; i < 7; i++) (answers[state.q] = answers[state.q] || {})["demo-" + Math.random().toString(36).slice(2, 8)] = Math.floor(Math.random() * n);
@@ -131,7 +173,8 @@
       var name = page.querySelector("[data-quiz-name]");
       name.value = me.name || "";
       name.addEventListener("input", function () { me.name = name.value.trim(); store.set("durf-day-me", me); });
-      page.querySelector("[data-quiz-note]").textContent = bus.live ? "" :
+      page.querySelector("[data-quiz-note]").textContent = bus.live ?
+        "Your answer goes to the screen in the room through a public message service (ntfy). Your name is optional; a first name is enough." :
         "The quiz is not live yet: answers only reach the screen in the room once the live connection is switched on.";
       bus.publish({ t: "hello" });
     },
@@ -159,6 +202,6 @@
     ready: ready,
     buildSlides: buildSlides,
     startParticipant: function () { ready.then(function () { participant.init(); }); },
-    status: function () { return bus.live ? "Live" : "Demo mode: answers stay in this browser"; }
+    status: function () { return bus.live ? "Live: answers come in through " + String(CFG.NTFY_SERVER || "ntfy").replace(/^https?:\/\//, "") : "Demo mode: answers stay in this browser"; }
   };
 })();

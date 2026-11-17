@@ -17,6 +17,7 @@ The page uses the [DURF design system](https://durf-project.github.io/durf-desig
 | F | full screen |
 | O, or the ▦ button | overview of all slides as thumbnails, grouped by the parts of the programme; click one to go there |
 | D | on a quiz question: add demo answers (demo mode only) |
+| Shift+R | on a quiz question: clear all answers in this browser |
 
 The DURF topbar at the top has the theme button (light, dark, system); in full screen it is hidden.
 The mouse stays free: links, the circles of the federation and the accordions can be clicked.
@@ -55,12 +56,19 @@ Every question gets a slide. On the slide the bars start at 0 and the count of a
 bottom right. Next click: the bars fill. Next click: the right answer is highlighted. Next click:
 the next question opens. Phones can only answer the question that is on the screen.
 
-**Live answers are not switched on yet** (`QUIZ_BACKEND: "demo"` in `config.js`). In demo mode the
-answers travel only between tabs of the same browser, which is enough to rehearse: open the slides
-in one tab and `#quiz` in another, or press D for demo answers. For phones in the room a small live
-service is needed (for example a Supabase or Firebase project, or ntfy.sh). `quiz.js` only needs an
-object with `publish(message)`, `subscribe(callback)` and `live: true`, set as `window.DURF_DAY_BUS`
-before `quiz.js` loads.
+**Live answers** go through [ntfy](https://ntfy.sh) (`QUIZ_BACKEND: "ntfy"` in `config.js`): the
+slides publish which question is open on `<topic>-state`, phones send their answer to
+`<topic>-answers`. No account or server of our own is needed; the page stays on GitHub Pages.
+
+- The topic name in `config.js` is long and random: anyone who knows it can read or send quiz
+  messages. Pick a new one for a next event.
+- The public ntfy.sh limits how many messages one internet address may send per day. If many
+  people answer over the same venue Wi-Fi, ask them to use mobile data, or point `NTFY_SERVER`
+  at your own ntfy server (for example a PikaPods ntfy instance).
+- To rehearse without sending anything, add `?quiz=demo` to the address: answers then travel only
+  between tabs of the same browser, and D adds demo answers.
+- The slides keep the counts in the browser. Shift+R on a quiz slide clears them, for example
+  after a rehearsal.
 
 ## Licence
 
