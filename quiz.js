@@ -56,7 +56,12 @@
         var t = m.t === "state" ? tState : tAnswers;
         if (m.t === "hello") return;                    // not needed: the last state comes from the cache
         if (presenter !== (m.t === "state")) return;    // each side only publishes its own kind
-        fetch(base + t, { method: "POST", body: JSON.stringify(m) }).catch(function () {});
+        /* retry a few times: a busy or rate-limited server (HTTP 429) should not lose a question or an answer */
+        (function send(tries) {
+          fetch(base + t, { method: "POST", body: JSON.stringify(m) })
+            .then(function (r) { if (!r.ok && tries < 4) setTimeout(function () { send(tries + 1); }, 1500 * (tries + 1)); })
+            .catch(function () { if (tries < 4) setTimeout(function () { send(tries + 1); }, 1500 * (tries + 1)); });
+        })(0);
       },
       subscribe: function (f) { subs.push(f); }
     };
