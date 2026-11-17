@@ -12,8 +12,9 @@ window.DURF_DAY = {
   // Where the slides take their content from, so it stays the same as on the sites.
   PROJECT_PAGE: "https://durf-project.github.io/project-page/",
   POSITION_PAPER_MD: "https://durf-project.github.io/position-paper/position-paper.md",
-  // Photos of speakers not in project-page/content/people.json
+  // Photos of speakers not in project-page/content/people.json: [file in project-page/assets/people/, source link]
   EXTRA_PHOTOS: {
-    "Jeroen Bosman": "https://media.licdn.com/dms/image/sync/v2/D4E27AQGrs-O3SD_fvA/articleshare-shrink_1280_800/articleshare-shrink_1280_800/0/1733743399499?e=2147483647&v=beta&t=DF7haOGHkl8IuBB_0K4o7Ebgly_gV-rXUoGEU8deusE"
+    "Jeroen Bosman": ["https://durf-project.github.io/project-page/assets/people/jeroen-bosman.jpg",
+      "https://media.licdn.com/dms/image/sync/v2/D4E27AQGrs-O3SD_fvA/articleshare-shrink_1280_800/articleshare-shrink_1280_800/0/1733743399499?e=2147483647&v=beta&t=DF7haOGHkl8IuBB_0K4o7Ebgly_gV-rXUoGEU8deusE"]
   }
 };
