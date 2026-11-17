@@ -15,8 +15,10 @@ The page uses the [DURF design system](https://durf-project.github.io/durf-desig
 | ← ↑ PageUp | back |
 | Home / End | first / last slide |
 | F | full screen |
+| O, or the ▦ button | overview of all slides as thumbnails, grouped by the parts of the programme; click one to go there |
 | D | on a quiz question: add demo answers (demo mode only) |
 
+The DURF topbar at the top has the theme button (light, dark, system); in full screen it is hidden.
 The mouse stays free: links, the circles of the federation and the accordions can be clicked.
 Keys pressed inside an embedded page (the circles, the poster) still move the slides on.
 The slide number is in the address (`#12`), so a reload keeps your place.

@@ -180,8 +180,17 @@
   <button type="button" data-go="prev" aria-label="Previous">‹</button>
   <span class="deck-count" aria-live="off"></span>
   <button type="button" data-go="next" aria-label="Next">›</button>
+  <button type="button" data-go="nav" aria-label="All slides" title="All slides (O)">▦</button>
   <button type="button" data-go="full" aria-label="Full screen" title="Full screen (F)">⛶</button>
 </nav>
+
+<!-- Slide overview: thumbnails grouped by the parts of the programme -->
+<dialog id="deck-nav" class="deck-nav" closedby="any" aria-labelledby="deck-nav-title">
+  <form method="dialog">
+    <header><h2 id="deck-nav-title">All slides</h2><button type="submit" class="outline" aria-label="Close">Close</button></header>
+    <div class="deck-nav__body"></div>
+  </form>
+</dialog>
 <div class="deck-progress" aria-hidden="true"><i></i></div>
 
 <!-- The quiz page for phones: #quiz -->
