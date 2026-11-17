@@ -174,7 +174,7 @@
       name.value = me.name || "";
       name.addEventListener("input", function () { me.name = name.value.trim(); store.set("durf-day-me", me); });
       page.querySelector("[data-quiz-note]").textContent = bus.live ?
-        "Your answer goes to the screen in the room through a public message service (ntfy). Your name is optional; a first name is enough." :
+        "Please use your own mobile data, not eduroam or the venue Wi-Fi. Your answer goes to the screen in the room through a public message service (ntfy). Your name is optional; a first name is enough." :
         "The quiz is not live yet: answers only reach the screen in the room once the live connection is switched on.";
       bus.publish({ t: "hello" });
     },
@@ -202,6 +202,6 @@
     ready: ready,
     buildSlides: buildSlides,
     startParticipant: function () { ready.then(function () { participant.init(); }); },
-    status: function () { return bus.live ? "Live: answers come in through " + String(CFG.NTFY_SERVER || "ntfy").replace(/^https?:\/\//, "") : "Demo mode: answers stay in this browser"; }
+    status: function () { return bus.live ? "Live: answers come in through " + String(CFG.NTFY_SERVER || "ntfy").replace(/^https?:\/\//, "") + ". Please use your own mobile data, not eduroam or the venue Wi-Fi." : "Demo mode: answers stay in this browser"; }
   };
 })();
