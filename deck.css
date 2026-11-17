@@ -1,10 +1,12 @@
 /* DURF Federation Day slides. Built on the DURF design system tokens (durf.css):
    fonts, theme colours, cards. Every slide is a 1600 x 900 stage, scaled to fit the screen. */
 
-html, body { height: 100%; margin: 0; background: #0b1424; overflow: hidden; }
+html, body { height: 100%; margin: 0; background: color-mix(in srgb, var(--foreground) 12%, var(--background)); overflow: hidden; }
 html.is-quiz-page, html.is-quiz-page body { overflow: auto; background: var(--background); }
 
-#deck { position: fixed; inset: 0; display: grid; place-items: center; }
+#deck { position: fixed; inset: calc(var(--topbar-h, 3.5rem) + 1px) 0 0 0; display: grid; place-items: center; overflow: hidden; }
+html.is-full #deck { inset: 0; }
+html.is-full .durf-topbar { display: none !important; }
 .slide {
   --pad: 88px;
   position: absolute; left: 50%; top: 50%; width: 1600px; height: 900px; box-sizing: border-box;
@@ -34,13 +36,13 @@ html.is-quiz-page, html.is-quiz-page body { overflow: auto; background: var(--ba
 [data-step]:not(.is-shown) { opacity: 0; transform: translateY(12px); pointer-events: none; }
 
 /* hero: title over moving dots and lines */
-.slide--hero { padding: 0; justify-content: center; background: #F3F7FB; }
+.slide--hero { padding: 0; justify-content: center; background: color-mix(in srgb, var(--durf-theme-3) 6%, var(--background)); }
 .net { position: absolute; inset: 0; width: 100%; height: 100%; }
 .hero { position: relative; margin: 0 var(--pad); max-width: 1180px;
-  background: color-mix(in srgb, #F3F7FB 72%, transparent); border-radius: 28px; padding: 40px 48px 44px; backdrop-filter: blur(2px); }
+  background: color-mix(in srgb, var(--background) 72%, transparent); border-radius: 28px; padding: 40px 48px 44px; backdrop-filter: blur(2px); }
 .hero__logo { width: 120px; height: 120px; display: block; margin-bottom: 24px; }
-.hero h1 { color: #050E1D; }
-.hero__sub { font-size: 34px; color: #3a4350; margin: 0; }
+.hero h1 { color: var(--foreground); }
+.hero__sub { font-size: 34px; color: var(--muted-foreground); margin: 0; }
 
 /* agenda */
 .agenda { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
@@ -134,7 +136,8 @@ html.is-quiz-page, html.is-quiz-page body { overflow: auto; background: var(--ba
 .deck-ui:hover, .deck-ui:focus-within { opacity: 1; }
 .deck-ui button { min-width: 40px; height: 40px; padding: 0 10px; border-radius: 10px; font-size: 22px; line-height: 1; }
 .deck-count { font-size: 14px; color: #c7cfd9; font-variant-numeric: tabular-nums; min-width: 4.5em; text-align: center; }
-.deck-progress { position: fixed; left: 0; right: 0; top: 0; height: 4px; z-index: 5; }
+.deck-progress { position: fixed; left: 0; right: 0; top: calc(var(--topbar-h, 3.5rem) + 1px); height: 4px; z-index: 5; }
+html.is-full .deck-progress { top: 0; }
 .deck-progress i { display: block; height: 100%; width: 0; background: var(--durf-theme-3); transition: width .3s ease; }
 
 /* phone quiz page */
