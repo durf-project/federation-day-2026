@@ -25,19 +25,22 @@
   root.setAttribute("data-theme", "light");   // slides are shown on a projector: always light
 
   /* ---- content from the DURF sites (each has the text in the HTML as a fallback) ---- */
-  var photos = Object.assign({}, CFG.EXTRA_PHOTOS || {});
+  /* name -> [photo in project-page/assets/people/, its source link]; tried in that order, then initials */
+  var photos = {};
+  Object.keys(CFG.EXTRA_PHOTOS || {}).forEach(function (n) { photos[n] = CFG.EXTRA_PHOTOS[n]; });
   function face(el, name) {
-    var url = photos[name];
+    var urls = (photos[name] || []).filter(Boolean);
     el.innerHTML = "";
-    if (url) {
-      var img = new Image();
-      img.alt = ""; img.referrerPolicy = "no-referrer"; img.src = url;
-      img.onerror = function () { el.textContent = initials(name); };
-      el.appendChild(img);
-    } else el.textContent = name === "Vacant" ? "?" : initials(name);
+    if (!urls.length) { el.textContent = name === "Vacant" ? "?" : initials(name); return; }
+    var img = new Image(), k = 0;
+    img.alt = ""; img.referrerPolicy = "no-referrer"; img.src = urls[0];
+    img.onerror = function () { if (++k < urls.length) img.src = urls[k]; else el.textContent = initials(name); };
+    el.appendChild(img);
   }
   var people = json(PP + "content/people.json").then(function (d) {
-    Object.keys(d.groups || {}).forEach(function (k) { (d.groups[k].people || []).forEach(function (p) { if (p.photo && !photos[p.name]) photos[p.name] = p.photo; }); });
+    Object.keys(d.groups || {}).forEach(function (k) { (d.groups[k].people || []).forEach(function (p) {
+      if ((p.photo || p.photoSource) && !photos[p.name]) photos[p.name] = [p.photo && !/^https?:/.test(p.photo) ? PP + p.photo : p.photo, p.photoSource];
+    }); });
   }).catch(function () {}).then(function () { $$("[data-person]").forEach(function (el) { face(el, el.dataset.person); }); });
 
   text(PP + "content/00-hero.md").then(function (md) {
