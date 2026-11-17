@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en" data-accent="blue">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DURF Federation Day 2026</title>
+<meta name="description" content="Slides of the DURF Federation Day, 18 November 2026, SURF Utrecht. Making the Dutch scholarly corpus global, open and resilient.">
+<link rel="icon" type="image/svg+xml" href="https://durf-project.github.io/durf-design-system/assets/favicon.svg">
+<meta property="og:image" content="https://durf-project.github.io/durf-design-system/assets/durf-og.png">
+<!-- DURF design system: Oat (vendored), tokens, no topbar on the slides -->
+<link rel="stylesheet" href="https://durf-project.github.io/durf-design-system/lib/oat.min.css">
+<link rel="stylesheet" href="https://durf-project.github.io/durf-design-system/durf.css">
+<script src="https://durf-project.github.io/durf-design-system/durf-nav.js" data-topbar="off" data-feedback="off"></script>
+<script src="https://durf-project.github.io/durf-design-system/lib/marked.min.js"></script>
+<link rel="stylesheet" href="deck.css">
+</head>
+<body>
+
+<!--
+  The slides. Every <section class="slide"> is one slide. Elements with data-step="N" appear on
+  the Nth click. Slides with data-kind get their steps from deck.js (quiz, accordion).
+  Content that lives on other DURF sites is fetched from there (data-src) or embedded (iframe),
+  so it stays the same as on those sites.
+-->
+<main id="deck" aria-live="polite">
+
+  <!-- 12:00 Lunch -->
+  <section class="slide slide--hero" id="welcome" data-agenda="lunch">
+    <canvas class="net" aria-hidden="true"></canvas>
+    <div class="hero">
+      <img class="hero__logo" src="https://durf-project.github.io/durf-design-system/assets/durf-logo.svg" alt="DURF">
+      <p class="eyebrow">DURF Federation Day · 18 November 2026 · SURF Utrecht</p>
+      <h1 data-src="hero-title">Making the Dutch scholarly corpus <em>global, open and resilient</em></h1>
+      <p class="hero__sub">Welcome. Lunch is served; the programme starts at 12:45.</p>
+    </div>
+  </section>
+
+  <!-- 12:45 Opening -->
+  <section class="slide" id="agenda" data-agenda="opening">
+    <p class="eyebrow">Programme</p>
+    <h2>This afternoon</h2>
+    <ol class="agenda">
+      <li data-a="lunch"><time>12:00 – 12:45</time><span>Lunch</span></li>
+      <li data-a="opening"><time>12:45 – 13:05</time><span>Opening by host <b>John Doove</b></span></li>
+      <li data-a="hilde"><time>13:05 – 13:25</time><span>The strategic importance of DURF, <b>Hilde van Wijngaarden</b></span></li>
+      <li data-a="maurice"><time>13:25 – 13:45</time><span>The DURF project plan and why we need to work together, <b>Maurice Vanderfeesten</b></span></li>
+      <li data-a="carousel"><time>13:45 – 15:15</time><span>Deep dive into the six DURF work packages: <b>interactive carousel</b></span></li>
+      <li data-a="keynote"><time>15:15 – 16:00</time><span>Keynote <b>Jeroen Bosman</b>: “Resilience of open science and the research commons in times of crisis”</span></li>
+      <li data-a="drinks"><time>16:00 – 17:00</time><span>Drinks</span></li>
+    </ol>
+  </section>
+
+  <section class="slide slide--speaker" id="john" data-agenda="opening">
+    <div class="speaker">
+      <span class="face face--xl" data-person="John Doove" style="--ring:var(--durf-theme-3)"></span>
+      <div>
+        <p class="eyebrow">12:45 · Opening</p>
+        <h2>John Doove</h2>
+        <p class="role">SURF · host of the day · DURF steering group</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="quiz-intro" data-agenda="opening">
+    <p class="eyebrow">Pub quiz</p>
+    <h2>Take out your phone</h2>
+    <div class="quiz-join">
+      <img class="qr" src="assets/qr-quiz.svg" alt="QR code to the quiz: edu.nl/y6cmd">
+      <div>
+        <p class="big">Scan the code or go to</p>
+        <p class="link"><a href="https://edu.nl/y6cmd" target="_blank" rel="noopener">edu.nl/y6cmd</a></p>
+        <p>Fill in your name if you like, and answer each question when it is on the screen.</p>
+        <p class="quiz-live" data-quiz-status></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- quiz question slides are inserted here by quiz.js -->
+  <template id="quiz-slot"></template>
+
+  <!-- 13:05 Hilde -->
+  <section class="slide slide--speaker" id="hilde" data-agenda="hilde">
+    <div class="speaker">
+      <span class="face face--xl" data-person="Hilde van Wijngaarden" style="--ring:var(--durf-theme-5)"></span>
+      <div>
+        <p class="eyebrow">13:05 · The strategic importance of DURF</p>
+        <h2>Hilde van Wijngaarden</h2>
+        <p class="role">VU Amsterdam · chair of the DURF steering group</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="corpus" data-agenda="hilde">
+    <div class="corpus">
+      <div>
+        <p class="eyebrow">Our shared responsibility</p>
+        <blockquote class="statement" data-src="statement">Together, the libraries are the custodians of the Dutch Scholarly Communication Corpus.</blockquote>
+        <ul class="kpis" data-src="figures"></ul>
+      </div>
+      <img class="corpus__img" src="https://durf-project.github.io/project-page/assets/img/scholarly-corpus-logo%2Btext.svg" alt="The Dutch Scholarly Communication Corpus, a shared resource">
+    </div>
+  </section>
+
+  <section class="slide" id="aim" data-agenda="hilde">
+    <p class="eyebrow">Position paper · where we start from</p>
+    <h2>Central aim</h2>
+    <p class="aim" data-src="aim">A call for university libraries, KB and OpenAIRE to commit to working together to help develop and sustain a robust backbone infrastructure for Dutch scholarly output that is shared, mature and resilient.</p>
+    <p class="more"><a href="https://durf-project.github.io/position-paper/" target="_blank" rel="noopener">durf-project.github.io/position-paper</a></p>
+  </section>
+
+  <section class="slide slide--image" id="chain" data-agenda="hilde">
+    <p class="eyebrow">Position paper · the DURF information chain</p>
+    <img src="https://durf-project.github.io/position-paper/assets/durf-information-chain.svg" alt="The DURF information chain: repositories and CRIS systems, the OpenAIRE services, preservation in the KB e-Depot and the Netherlands Research Portal, with the six themes as puzzle pieces">
+  </section>
+
+  <section class="slide" id="commitments" data-agenda="hilde" data-kind="accordion">
+    <p class="eyebrow">Position paper · strategic commitments</p>
+    <h2>What we believe, per theme</h2>
+    <div class="commitments" data-src="commitments"></div>
+  </section>
+
+  <section class="slide slide--embed" id="circles" data-agenda="hilde">
+    <p class="eyebrow">Project board and team · click a circle to see who takes part</p>
+    <!-- data-zoom: the embedded page is drawn at this magnification, so its text reads well on a projector -->
+    <div class="embed-box" data-zoom="1.7"><iframe title="The federation and its circles" loading="lazy"
+      data-embed="https://durf-project.github.io/project-page/?embed&amp;only=federation"></iframe></div>
+  </section>
+
+  <!-- 13:25 Maurice -->
+  <section class="slide slide--speaker" id="maurice" data-agenda="maurice">
+    <div class="speaker">
+      <span class="face face--xl" data-person="Maurice Vanderfeesten" style="--ring:var(--durf-theme-1)"></span>
+      <div>
+        <p class="eyebrow">13:25 · The DURF project plan and why we need to work together</p>
+        <h2>Maurice Vanderfeesten</h2>
+        <p class="role">SURF · theme 1 lead, Governance</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13:45 Carousel -->
+  <section class="slide" id="leads" data-agenda="carousel">
+    <p class="eyebrow">13:45 · Deep dive into the six work packages</p>
+    <h2>Meet the theme leads</h2>
+    <ul class="leads" data-src="leads"></ul>
+  </section>
+
+  <section class="slide slide--embed" id="carousel" data-agenda="carousel">
+    <div class="embed-box"><iframe title="Theme carousel: opening poster" loading="lazy"
+      data-embed="https://durf-project.github.io/durf-gantt/posters/?theme=0&amp;embed"></iframe></div>
+  </section>
+
+  <!-- 15:15 Keynote -->
+  <section class="slide slide--speaker" id="keynote" data-agenda="keynote">
+    <div class="speaker">
+      <span class="face face--xl" data-person="Jeroen Bosman" style="--ring:var(--durf-theme-4)"></span>
+      <div>
+        <p class="eyebrow">15:15 · Keynote</p>
+        <h2>Jeroen Bosman</h2>
+        <p class="role">Utrecht University</p>
+        <p class="title-talk">“Resilience of open science and the research commons in times of crisis”</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16:00 Drinks -->
+  <section class="slide slide--hero" id="drinks" data-agenda="drinks">
+    <canvas class="net" aria-hidden="true"></canvas>
+    <div class="hero">
+      <img class="hero__logo" src="https://durf-project.github.io/durf-design-system/assets/durf-logo.svg" alt="DURF">
+      <p class="eyebrow">16:00 – 17:00</p>
+      <h1>Thank you. Drinks!</h1>
+      <p class="hero__sub">Questions: durf@surf.nl · durf-project.github.io</p>
+    </div>
+  </section>
+</main>
+
+<nav class="deck-ui" aria-label="Slides">
+  <button type="button" data-go="prev" aria-label="Previous">‹</button>
+  <span class="deck-count" aria-live="off"></span>
+  <button type="button" data-go="next" aria-label="Next">›</button>
+  <button type="button" data-go="full" aria-label="Full screen" title="Full screen (F)">⛶</button>
+</nav>
+<div class="deck-progress" aria-hidden="true"><i></i></div>
+
+<!-- The quiz page for phones: #quiz -->
+<div id="quiz-page" hidden>
+  <div class="qp">
+    <img class="qp__logo" src="https://durf-project.github.io/durf-design-system/assets/durf-logo.svg" alt="">
+    <h1>DURF pub quiz</h1>
+    <label class="qp__name">Your name (optional)<input type="text" autocomplete="name" maxlength="60" data-quiz-name></label>
+    <div class="qp__body" data-quiz-body><p>Waiting for the first question…</p></div>
+    <p class="qp__note" data-quiz-note></p>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="quiz.js"></script>
+<script src="deck.js"></script>
+</body>
+</html>
