@@ -167,7 +167,8 @@
     maurice: "13:25 · The DURF project plan, Maurice Vanderfeesten", carousel: "13:45 · Deep dive into the six work packages",
     keynote: "15:15 · Keynote, Jeroen Bosman", drinks: "16:00 · Drinks" };
   function overview() {
-    var dlg = document.getElementById("deck-nav"), body = dlg.querySelector(".deck-nav__body"), html = [], last = null;
+    var dlg = document.getElementById("deck-nav"), body = dlg.querySelector(".deck-nav__body"), last = null;
+    if (!dlg.open) { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }   // open first, then fill
     body.innerHTML = "";
     slides.forEach(function (s, i) {
       var part = s.dataset.agenda || "";
@@ -189,12 +190,22 @@
       frame.appendChild(c);
       var n = document.createElement("span"); n.className = "deck-nav__n"; n.textContent = i + 1;
       btn.appendChild(frame); btn.appendChild(n);
+      try { c.querySelectorAll("img").forEach(function (im) { im.loading = "eager"; }); } catch (e) {}
       btn.addEventListener("click", function () { dlg.close(); go(i, 0); });
       body.lastChild.appendChild(btn);
     });
-    dlg.showModal();
+    /* scale the thumbnails in script: not every browser can divide lengths in CSS */
+    var w = body.querySelector(".deck-nav__thumb");
+    body.style.setProperty("--thumb", String((w ? w.clientWidth : 208) / 1600));
     var curBtn = body.querySelector(".is-current"); if (curBtn) curBtn.scrollIntoView({ block: "center" });
   }
+
+  (function () {
+    var dlg = document.getElementById("deck-nav");
+    if (!dlg) return;
+    dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); });   // click on the backdrop closes
+    window.addEventListener("resize", function () { if (dlg.open) { var w = dlg.querySelector(".deck-nav__thumb"); if (w) dlg.querySelector(".deck-nav__body").style.setProperty("--thumb", String(w.clientWidth / 1600)); } });
+  })();
 
   function full() { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen && root.requestFullscreen(); }
 
