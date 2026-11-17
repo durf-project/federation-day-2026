@@ -115,6 +115,9 @@ html.is-full .durf-topbar { display: none !important; }
 
 /* embeds */
 .slide--embed { padding: 40px 40px 52px; }
+/* the logo sits above the embed and clear of it */
+.slide.slide--embed:not(.slide--hero)::before { z-index: 1; top: 24px; width: 52px; height: 52px; }
+.slide.slide--embed:not(:has(.eyebrow))::before { display: none; }
 .slide--embed .eyebrow { margin-left: 48px; }
 .embed-box { --zoom: 1; position: relative; flex: 1; min-height: 0; border-radius: 16px; overflow: hidden; }
 .embed-box iframe { position: absolute; left: 0; top: 0; border: 0; background: var(--background);
