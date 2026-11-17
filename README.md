@@ -17,7 +17,7 @@ The page uses the [DURF design system](https://durf-project.github.io/durf-desig
 | F | full screen |
 | O, or the ▦ button | overview of all slides as thumbnails, grouped by the parts of the programme; click one to go there |
 | D | on a quiz question: add demo answers (demo mode only) |
-| Shift+R | on a quiz question: clear all answers in this browser |
+| Shift+R | on a quiz question or leaderboard: clear all answers and scores in this browser |
 
 The DURF topbar at the top has the theme button (light, dark, system); in full screen it is hidden.
 The mouse stays free: links, the circles of the federation and the accordions can be clicked.
@@ -53,9 +53,26 @@ Write the questions in `quiz/questions.md`:
 - [ ] About 10 million
 ```
 
+Add a line `theme: 4` under a question to show that theme's puzzle piece, number and colour.
+
 Every question gets a slide. On the slide the bars start at 0 and the count of answers runs at the
-bottom right. Next click: the bars fill. Next click: the right answer is highlighted. Next click:
-the next question opens. Phones can only answer the question that is on the screen.
+bottom right. Next click: the bars fill. Next click: the right answer is highlighted, and every
+phone shows whether it was right, the points and its place. Next click: the next question opens.
+Phones can only answer the question that is on the screen.
+
+**Points.** A right answer scores 1,000 points for the fastest, 25 fewer for each next one, at least
+500. The time is measured on the phone, from when the question appears until the answer is tapped;
+changing an answer restarts it. The last question counts double and has a 2× badge.
+
+**Leaderboards** (top 10) come by themselves, so questions can be added or removed:
+
+- after question 1: the scores grow from zero;
+- after the one but last question: first the standings of the previous leaderboard, next click the
+  bars move, change length and the scores count up;
+- the final score after the last question: the same, and one more click crowns the top three with
+  medals and confetti.
+
+People without a name show as "Player" and a code.
 
 **Live answers** go through [ntfy](https://ntfy.sh) (`QUIZ_BACKEND: "ntfy"` in `config.js`): the
 slides publish which question is open on `<topic>-state`, phones send their answer to
