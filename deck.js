@@ -22,7 +22,15 @@
     window.DurfQuiz.startParticipant();
     return;
   }
-  root.setAttribute("data-theme", "light");   // slides are shown on a projector: always light
+  /* The theme follows the DURF topbar button (light, dark, system); embeds follow along. */
+  function themeNow() { return root.getAttribute("data-theme") || "auto"; }
+  function tellEmbeds() {
+    Array.prototype.forEach.call(document.querySelectorAll("iframe"), function (f) {
+      try { f.contentWindow.postMessage({ type: "durf-embed-theme", theme: themeNow() }, "*"); } catch (e) {}
+    });
+  }
+  new MutationObserver(tellEmbeds).observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+  document.addEventListener("fullscreenchange", function () { root.classList.toggle("is-full", !!document.fullscreenElement); setTimeout(scale, 60); });
 
   /* ---- content from the DURF sites (each has the text in the HTML as a fallback) ---- */
   /* name -> [photo in project-page/assets/people/, its source link]; tried in that order, then initials */
@@ -111,7 +119,7 @@
   }
 
   function scale() {
-    var sc = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+    var d = document.getElementById("deck"), sc = Math.min(d.clientWidth / 1600, d.clientHeight / 900);
     slides.forEach(function (s) { s.style.setProperty("--scale", sc); });
   }
 
@@ -122,7 +130,7 @@
       $$("iframe[data-embed]", s).forEach(function (f) {
         if (!f.src) {
           f.src = f.dataset.embed;
-          f.addEventListener("load", function () { try { f.contentWindow.postMessage({ type: "durf-embed-theme", theme: "light" }, "*"); } catch (e) {} });
+          f.addEventListener("load", function () { try { f.contentWindow.postMessage({ type: "durf-embed-theme", theme: themeNow() }, "*"); } catch (e) {} });
         }
       });
     });
@@ -178,6 +186,11 @@
     b.addEventListener("click", function () { ({ prev: prev, next: next, full: full })[b.dataset.go](); b.blur(); });
   });
   window.addEventListener("resize", scale);
+  /* a typed or linked #number jumps to that slide */
+  window.addEventListener("hashchange", function () {
+    var n = parseInt(location.hash.slice(1), 10);
+    if (n > 0 && slides.length && n - 1 !== cur) go(n - 1, 0);
+  });
 
   /* ---- moving dots and lines on the hero slides ---- */
   var net = (function () {
