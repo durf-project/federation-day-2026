@@ -221,11 +221,15 @@
       (sum.players === 1 ? "" : "s") + ", on " + sum.questions + " of " + sum.of + " questions. " +
       (sum.live ? "Live mode: answers come in through ntfy." : "Demo mode: answers stay in this browser.");
     dlg.querySelector("[data-quiz-download]").disabled = !sum || !sum.answers;
+    var sec = dlg.querySelector("[data-quiz-seconds]");
+    if (sec && Q && Q.seconds && document.activeElement !== sec) sec.value = Q.seconds();
     $$("[data-theme-pick]", dlg).forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.themePick === themeStored())); });
   }
   (function () {
     var dlg = document.getElementById("deck-settings");
     if (!dlg) return;
+    var sec = dlg.querySelector("[data-quiz-seconds]");
+    if (sec) sec.addEventListener("change", function () { sec.value = window.DurfQuiz.setSeconds(sec.value); });
     dlg.addEventListener("click", function (e) {
       if (e.target === dlg) { dlg.close(); return; }
       var b = e.target.closest("button");

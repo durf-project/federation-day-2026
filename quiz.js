@@ -11,7 +11,9 @@
   var COLOURS = ["var(--durf-theme-3)", "var(--durf-theme-1)", "var(--durf-theme-4)", "var(--durf-theme-5)", "var(--durf-theme-6)", "var(--durf-theme-2)"];
   var KEYS = "ABCDEF";
   var TOP = 1000, STEP = 25, FLOOR = 500;
-  var SECONDS = +CFG.QUIZ_SECONDS || 30;      // how long a question stays open
+  /* how long a question stays open: config.js, or what was chosen in the settings dialog */
+  var SECONDS = +CFG.QUIZ_SECONDS || 20;
+  try { var savedSec = +localStorage.getItem("durf-day-seconds"); if (savedSec >= 5 && savedSec <= 300) SECONDS = savedSec; } catch (e) {}
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function inline(s) { return window.marked && window.marked.parseInline ? window.marked.parseInline(s) : esc(s); }
@@ -454,6 +456,19 @@
     ready: ready,
     buildSlides: buildSlides,
     summary: summary,
+    seconds: function () { return SECONDS; },
+    setSeconds: function (n) {
+      n = Math.round(+n);
+      if (!(n >= 5 && n <= 300)) return SECONDS;
+      SECONDS = n;
+      try { localStorage.setItem("durf-day-seconds", String(n)); } catch (e) {}
+      /* repaint the timers that are not running */
+      document.querySelectorAll(".slide--quiz").forEach(function (sl) {
+        var q = +sl.dataset.q;
+        if (!timer || timer.q !== q) paintTimer(sl, timedOut[q] ? 0 : SECONDS);
+      });
+      return SECONDS;
+    },
     download: download,
     reset: reset,
     startParticipant: function () { ready.then(function () { participant.init(); }); },

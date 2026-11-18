@@ -57,7 +57,8 @@ Write the questions in `quiz/questions.md`:
 Add a line `theme: 4` under a question to show that theme's puzzle piece, number and colour.
 `theme: 0` (warm-up) and `theme: 7` (closing question) show the DURF logo instead.
 
-Each question is open for 30 seconds (`QUIZ_SECONDS` in `config.js`). A countdown runs on the
+Each question is open for 20 seconds: `QUIZ_SECONDS` in `config.js`, or change it under ⚙ settings
+("Time per question", kept in this browser). A countdown runs on the
 slide and on the phones; after that nobody can answer.
 
 Every question gets a slide. On the slide the bars start at 0 and the count of answers runs at the

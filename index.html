@@ -213,6 +213,11 @@
         <button type="button" class="outline deck-settings__danger" data-quiz-reset>Reset answers</button>
       </p>
       <p class="deck-settings__hint">Results are kept in this browser only. Download them before you reset.</p>
+      <p class="deck-settings__row deck-settings__time">
+        <label for="deck-seconds">Time per question</label>
+        <input id="deck-seconds" type="number" min="5" max="300" step="1" inputmode="numeric" data-quiz-seconds>
+        <span>seconds</span>
+      </p>
       <h3>Theme</h3>
       <p class="deck-settings__row" role="group" aria-label="Theme">
         <button type="button" class="outline" data-theme-pick="light">Light</button>
