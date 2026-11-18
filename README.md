@@ -88,6 +88,9 @@ slides publish which question is open on `<topic>-state`, phones send their answ
 - The slides keep the counts in the browser. Shift+R on a quiz slide clears them, for example
   after a rehearsal.
 
+Instructions for the quiz host (in Dutch): `docs/instructie-pubquiz.pdf`, made from
+`docs/instructie-pubquiz.html` (print it to PDF from a browser after a change).
+
 ## Licence
 
 EUPL 1.2, see `LICENSE`.
