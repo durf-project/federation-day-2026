@@ -260,6 +260,11 @@
     /* leaving a question that is still open closes it; after the answer, phones keep their result */
     leave: function () { if (state.q != null && !state.done) setState(null, false); }
   };
+  /* the "Take out your phone" slide: clear what phones see, such as the last question of a rehearsal */
+  window.DeckKinds.quizintro = {
+    steps: function () { return 0; },
+    render: function () { if (state.q != null || !state.cleared) { setState(null, false); state.cleared = true; } }
+  };
   window.DeckKinds.board = {
     steps: function (s) { return +s.dataset.from < 0 ? 0 : s.classList.contains("slide--final") ? 2 : 1; },
     render: function (slide, step) {
