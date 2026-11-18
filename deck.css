@@ -222,6 +222,8 @@ html.is-full .deck-progress { top: 0; }
 .deck-settings__row { display: flex; flex-wrap: wrap; gap: .5rem; }
 .deck-settings__row [aria-pressed="true"] { background: var(--accent-solid); color: #fff; border-color: var(--accent-solid); }
 .deck-settings__danger { color: var(--durf-theme-6-ink, var(--durf-theme-6)); border-color: currentColor; }
+.deck-settings__time { align-items: center; }
+.deck-settings__time input { width: 6rem; }
 .deck-settings__hint { font-size: .875rem; color: var(--muted-foreground); }
 .deck-ui button svg { display: block; margin: auto; }
 .qp__note { color: var(--muted-foreground); font-size: .9375rem; margin-top: 1.5rem; }

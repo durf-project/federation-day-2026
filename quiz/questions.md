@@ -17,7 +17,7 @@
   - leaderboards come after question 1, after the one but last question, and the final
     score after the last question.
 
-  Every question is open for 30 seconds (QUIZ_SECONDS in config.js).
+  Every question is open for 20 seconds (QUIZ_SECONDS in config.js, or ⚙ settings on the slides).
 
   Questions by John Doove, with: 1 the commons section of the position paper; 2 WISH, EduStandaard;
   3 the full text section of the position paper; 4 KB (Ingeborg's list for theme 4);

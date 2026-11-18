@@ -17,7 +17,7 @@ window.DURF_DAY = {
   NTFY_SERVER: "https://ntfy.sh",
   NTFY_TOPIC: "durf-fedday-2026-7f66016ea781fae0",
   QUIZ_SOURCE: "quiz/questions.md",
-  QUIZ_SECONDS: 30,                 // how long each question stays open
+  QUIZ_SECONDS: 20,                 // how long each question stays open (can be changed in the ⚙ settings)
   // Where the slides take their content from, so it stays the same as on the sites.
   PROJECT_PAGE: "https://durf-project.github.io/project-page/",
   POSITION_PAPER_MD: "https://durf-project.github.io/position-paper/position-paper.md",
