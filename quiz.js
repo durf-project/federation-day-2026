@@ -11,6 +11,7 @@
   var COLOURS = ["var(--durf-theme-3)", "var(--durf-theme-1)", "var(--durf-theme-4)", "var(--durf-theme-5)", "var(--durf-theme-6)", "var(--durf-theme-2)"];
   var KEYS = "ABCDEF";
   var TOP = 1000, STEP = 25, FLOOR = 500;
+  var SECONDS = +CFG.QUIZ_SECONDS || 30;      // how long a question stays open
 
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
   function inline(s) { return window.marked && window.marked.parseInline ? window.marked.parseInline(s) : esc(s); }
@@ -22,7 +23,7 @@
     md.replace(/<!--[\s\S]*?-->/g, "").split(/\r?\n/).forEach(function (line) {
       var h = /^###\s+(.+?)\s*$/.exec(line);
       if (h) { cur = { text: h[1], choices: [], right: -1, theme: 0 }; qs.push(cur); return; }
-      var t = /^\s*theme:\s*([1-6])\s*$/i.exec(line);
+      var t = /^\s*theme:\s*(\d+)\s*$/i.exec(line);
       if (t && cur) { cur.theme = +t[1]; return; }
       var c = /^\s*[-*]\s+(?:\[( |x|X)\]\s+)?(.+?)\s*$/.exec(line);
       if (c && cur) { if (c[1] && c[1].toLowerCase() === "x") cur.right = cur.choices.length; cur.choices.push(c[2]); }
@@ -96,6 +97,8 @@
   var names = store.get("durf-day-names", {});       // { participant: name }
   var state = { t: "state", q: null, open: false };
   var openedAt = 0;
+  var timedOut = {};                                  // questions whose 30 seconds are over
+  var timer = null;
 
   function entry(v) { return Array.isArray(v) ? v : [v, 0]; }   // older rehearsal data: just the choice
   function nameOf(p) { return names[p] || "Player " + String(p).replace(/^p-/, "").slice(0, 4).toUpperCase(); }
@@ -141,7 +144,7 @@
 
   function setState(q, open, done) {
     state = { t: "state", q: q, open: open };
-    if (open) openedAt = Date.now();
+    if (open) { openedAt = Date.now(); state.sec = SECONDS; }
     if (done && q != null) {
       /* tell each phone how it did: [points for this question, total, place] */
       var tot = totals(q), pts = points(q), order = ranked(playersUpTo(q), tot), res = {};
@@ -156,7 +159,7 @@
   function piece(n, size) {
     return '<span class="quiz-piece" style="--c:var(--durf-theme-' + n + ');--s:' + size + 'px"><span class="durf-piece" data-theme-n="' + n + '"></span><b>' + n + "</b></span>";
   }
-  function themeOf(n) { return window.DURF && window.DURF.theme ? window.DURF.theme(n) : null; }
+  function themeOf(n) { return n >= 1 && n <= 6 && window.DURF && window.DURF.theme ? window.DURF.theme(n) : null; }
 
   function buildSlides(slot) {
     var frag = document.createDocumentFragment(), N = questions.length;
@@ -166,16 +169,19 @@
       at.forEach(function (q, i) { boards[q] = i ? at[i - 1] : -1; });
     }
     questions.forEach(function (q, i) {
-      var s = document.createElement("section"), th = q.theme ? themeOf(q.theme) : null, last = isLast(i) && N > 1;
+      var th = themeOf(q.theme), last = isLast(i) && N > 1;
+      var s = document.createElement("section");
       s.className = "slide slide--quiz" + (last ? " slide--double" : ""); s.id = "quiz-" + (i + 1);
       s.dataset.kind = "quiz"; s.dataset.q = i; s.dataset.agenda = "opening";
-      if (q.theme) s.style.setProperty("--tc", "var(--durf-theme-" + q.theme + ")");
-      s.innerHTML = '<p class="eyebrow quiz-eyebrow">' + (q.theme ? piece(q.theme, 76) : "") +
+      if (th) s.style.setProperty("--tc", "var(--durf-theme-" + th.n + ")");
+      var extra = th ? "Theme " + th.n + " " + esc(th.short) : q.theme === 0 ? "Warm-up" : "";
+      s.innerHTML = '<p class="eyebrow quiz-eyebrow">' + (th ? piece(th.n, 76) : '<img class="quiz-mark" src="https://durf-project.github.io/durf-design-system/assets/durf-logo.svg" alt="">') +
         "<span>" + (last ? "Last question · double points" : "Pub quiz · question " + (i + 1) + " of " + N) +
-        (th ? ' · <span class="quiz-theme">Theme ' + th.n + " " + esc(th.short) + "</span>" : "") + "</span></p>" +
+        (extra ? ' · <span class="quiz-theme">' + extra + "</span>" : "") + "</span></p>" +
+        '<div class="quiz-timer" aria-live="off"><b>' + SECONDS + '</b><small>seconds</small></div>' +
         (last ? '<span class="x2" aria-label="double points">2×</span>' : "") +
         "<h2>" + inline(q.text) + "</h2>" +
-        '<ol class="bars">' + q.choices.map(function (c, k) {
+        '<ol class="bars' + (q.choices.some(function (c) { return c.length > 44; }) ? " is-long" : "") + '">' + q.choices.map(function (c, k) {
           return '<li style="--c:' + COLOURS[k % COLOURS.length] + '"' + (k === q.right ? ' class="is-right"' : "") + '><span class="key">' + KEYS[k] +
             '</span><span class="track"><span class="fill"></span><span class="label">' + inline(c) + '</span></span><span class="n">0</span></li>';
         }).join("") + "</ol>" +
@@ -253,18 +259,49 @@
       var q = +slide.dataset.q;
       slide.classList.toggle("is-revealed", step >= 1);
       slide.classList.toggle("is-answered", step >= 2);
-      var open = step === 0, done = step === 2;
+      var open = step === 0 && !timedOut[q], done = step === 2;
       if (state.q !== q || state.open !== open || !!state.done !== done) setState(q, open, done);
+      if (open) startTimer(slide, q); else stopTimer(slide, q);
       updateSlide(q);
     },
     /* leaving a question that is still open closes it; after the answer, phones keep their result */
-    leave: function () { if (state.q != null && !state.done) setState(null, false); }
+    leave: function (slide) { stopTimer(slide); if (state.q != null && !state.done) setState(null, false); }
   };
   /* the "Take out your phone" slide: clear what phones see, such as the last question of a rehearsal */
   window.DeckKinds.quizintro = {
     steps: function () { return 0; },
     render: function () { if (state.q != null || !state.cleared) { setState(null, false); state.cleared = true; } }
   };
+  /* the countdown: SECONDS after a question opens, nobody can answer any more */
+  function paintTimer(slide, left) {
+    var el = slide && slide.querySelector(".quiz-timer");
+    if (!el) return;
+    el.querySelector("b").textContent = Math.ceil(left);
+    el.style.setProperty("--p", String(left / SECONDS));
+    el.classList.toggle("is-low", left <= 5);
+    slide.classList.toggle("is-timeup", left <= 0);
+  }
+  function startTimer(slide, q) {
+    if (timer && timer.q === q) return;
+    stopTimer();
+    var end = openedAt + SECONDS * 1000;
+    timer = { q: q, slide: slide, id: setInterval(tick, 100) };
+    function tick() {
+      var left = Math.max(0, (end - Date.now()) / 1000);
+      paintTimer(slide, left);
+      if (left > 0) return;
+      if (timer && timer.q === q) { clearInterval(timer.id); timer = null; }
+      timedOut[q] = true;
+      /* a short grace period for answers that are still on their way */
+      setTimeout(function () { if (state.q === q && state.open) setState(q, false, false); }, 1500);
+    }
+    tick();
+  }
+  function stopTimer(slide, q) {
+    if (timer) { clearInterval(timer.id); timer = null; }
+    if (slide && slide.querySelector(".quiz-timer")) paintTimer(slide, q != null && timedOut[q] ? 0 : SECONDS);
+  }
+
   window.DeckKinds.board = {
     steps: function (s) { return +s.dataset.from < 0 ? 0 : s.classList.contains("slide--final") ? 2 : 1; },
     render: function (slide, step) {
@@ -287,6 +324,7 @@
     if (m.t === "answer" && isPresenter) {
       if (state.q !== m.q || !state.open) return;           // only the open question counts
       var ms = typeof m.ms === "number" && m.ms >= 0 && m.ms < 3600000 ? m.ms : Date.now() - openedAt;
+      if (ms > SECONDS * 1000 + 500) return;                // too late
       (answers[m.q] = answers[m.q] || {})[m.p] = [m.c, Math.round(ms)];
       if (m.name) names[m.p] = String(m.name).slice(0, 40);
       save();
@@ -301,11 +339,7 @@
   document.addEventListener("keydown", function (e) {
     var onQuiz = state.q != null || /slide--board/.test((document.querySelector(".slide.is-current") || {}).className || "");
     /* Shift+R on a quiz slide or leaderboard: clear all answers and names (e.g. after a rehearsal) */
-    if (e.key === "R" && e.shiftKey && onQuiz && window.confirm("Clear all quiz answers and scores in this browser?")) {
-      answers = {}; names = {}; save();
-      questions.forEach(function (q, i) { updateSlide(i); });
-      return;
-    }
+    if (e.key === "R" && e.shiftKey && onQuiz) { reset(); return; }
     if ((e.key === "d" || e.key === "D") && !e.shiftKey && !bus.live && state.q != null && state.open) {
       var n = questions[state.q].choices.length, demo = ["Ada", "Bas", "Chen", "Daan", "Eva", "Femke", "Gijs", "Hilde", "Ilse", "Joost", "Kim", "Lotte"];
       demo.forEach(function (nm, i) {
@@ -317,6 +351,43 @@
       save(); updateSlide(state.q);
     }
   });
+
+  /* ---- settings dialog: count, download and reset the answers ---- */
+  function reset() {
+    if (!window.confirm("Clear all quiz answers and scores in this browser?")) return false;
+    answers = {}; names = {}; timedOut = {}; save();
+    questions.forEach(function (q, i) { updateSlide(i); });
+    document.querySelectorAll(".slide--board .board").forEach(function (ol) { ol.innerHTML = ""; });
+    return true;
+  }
+  function summary() {
+    var n = 0, qs = 0, ps = {};
+    Object.keys(answers).forEach(function (q) { var k = Object.keys(answers[q] || {}); if (k.length) qs++; n += k.length; k.forEach(function (p) { ps[p] = 1; }); });
+    return { answers: n, players: Object.keys(ps).length, questions: qs, of: questions.length, live: bus.live };
+  }
+  function csvCell(v) { v = String(v == null ? "" : v); return /[",\n;]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function download() {
+    var last = questions.length - 1, tot = totals(last), order = ranked(playersUpTo(last), tot), pts = questions.map(function (q, i) { return points(i); });
+    var head = ["place", "name", "participant", "total"];
+    questions.forEach(function (q, i) { head.push("q" + (i + 1) + " answer", "q" + (i + 1) + " right", "q" + (i + 1) + " seconds", "q" + (i + 1) + " points"); });
+    var rows = [head];
+    order.forEach(function (p, r) {
+      var row = [r + 1, nameOf(p), p, tot[p] || 0];
+      questions.forEach(function (q, i) {
+        var a = (answers[i] || {})[p];
+        if (a == null) { row.push("", "", "", ""); return; }
+        var e = entry(a);
+        row.push(KEYS[e[0]] || "", e[0] === q.right ? "yes" : "no", (e[1] / 1000).toFixed(1), pts[i][p] || 0);
+      });
+      rows.push(row);
+    });
+    var csv = rows.map(function (r) { return r.map(csvCell).join(","); }).join("\r\n");
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8" }));
+    a.download = "durf-pubquiz-results-" + new Date().toISOString().slice(0, 16).replace(/[T:]/g, "-") + ".csv";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 5000);
+  }
 
   /* ---- participant side: #quiz ---- */
   var me = store.get("durf-day-me", null) || { id: "p-" + Math.random().toString(36).slice(2, 10), name: "", picks: {} };
@@ -354,7 +425,8 @@
         return;
       }
       if (!(m.q in shownAt)) shownAt[m.q] = performance.now();
-      body.innerHTML = head + '<div class="qp__choices">' + q.choices.map(function (c, k) {
+      var sec = m.sec || SECONDS;
+      body.innerHTML = head + '<p class="qp__timer"><b></b> seconds left</p><div class="qp__choices">' + q.choices.map(function (c, k) {
         return '<button type="button" class="outline" data-c="' + k + '" aria-pressed="' + (me.picks[m.q] === k) + '"><b>' + KEYS[k] + "</b>&nbsp; " + inline(c) + "</button>";
       }).join("") + "</div><p class=\"qp__note\">Be quick: the faster a right answer, the more points. You can change your answer, but then your time counts from the change.</p>";
       body.querySelectorAll("button").forEach(function (b) {
@@ -365,12 +437,25 @@
           bus.publish({ t: "answer", q: m.q, c: c, p: me.id, name: me.name || "", ms: Math.round(performance.now() - shownAt[m.q]) });
         });
       });
+      clearInterval(participant.tick);
+      participant.tick = setInterval(function () {
+        var left = Math.max(0, sec - (performance.now() - shownAt[m.q]) / 1000), t = body.querySelector(".qp__timer");
+        if (!t) { clearInterval(participant.tick); return; }
+        t.querySelector("b").textContent = Math.ceil(left);
+        if (left > 0) return;
+        clearInterval(participant.tick);
+        t.innerHTML = "<b>Time's up!</b> Look at the screen.";
+        body.querySelectorAll(".qp__choices button").forEach(function (x) { x.disabled = true; });
+      }, 200);
     }
   };
 
   window.DurfQuiz = {
     ready: ready,
     buildSlides: buildSlides,
+    summary: summary,
+    download: download,
+    reset: reset,
     startParticipant: function () { ready.then(function () { participant.init(); }); },
     status: function () { return bus.live ? "Live: answers come in through " + String(CFG.NTFY_SERVER || "ntfy").replace(/^https?:\/\//, "") + ". Please use your own mobile data, not eduroam or the venue Wi-Fi." : "Demo mode: answers stay in this browser"; }
   };

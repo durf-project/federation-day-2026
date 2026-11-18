@@ -207,6 +207,46 @@
     window.addEventListener("resize", function () { if (dlg.open) { var w = dlg.querySelector(".deck-nav__thumb"); if (w) dlg.querySelector(".deck-nav__body").style.setProperty("--thumb", String(w.clientWidth / 1600)); } });
   })();
 
+  /* ---- settings: quiz answers (count, download, reset) and the colour theme ---- */
+  function settings() {
+    var dlg = document.getElementById("deck-settings");
+    if (!dlg) return;
+    paintSettings(dlg);
+    if (!dlg.open) { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open", ""); }
+  }
+  function themeStored() { try { return localStorage.getItem("durf-theme") || "auto"; } catch (e) { return "auto"; } }
+  function paintSettings(dlg) {
+    var Q = window.DurfQuiz, sum = Q && Q.summary ? Q.summary() : null, el = dlg.querySelector("[data-quiz-summary]");
+    if (sum) el.innerHTML = "<b>" + sum.answers + "</b> answer" + (sum.answers === 1 ? "" : "s") + " from <b>" + sum.players + "</b> participant" +
+      (sum.players === 1 ? "" : "s") + ", on " + sum.questions + " of " + sum.of + " questions. " +
+      (sum.live ? "Live mode: answers come in through ntfy." : "Demo mode: answers stay in this browser.");
+    dlg.querySelector("[data-quiz-download]").disabled = !sum || !sum.answers;
+    $$("[data-theme-pick]", dlg).forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.themePick === themeStored())); });
+  }
+  (function () {
+    var dlg = document.getElementById("deck-settings");
+    if (!dlg) return;
+    dlg.addEventListener("click", function (e) {
+      if (e.target === dlg) { dlg.close(); return; }
+      var b = e.target.closest("button");
+      if (!b) return;
+      if (b.hasAttribute("data-quiz-download")) window.DurfQuiz.download();
+      if (b.hasAttribute("data-quiz-reset")) window.DurfQuiz.reset();
+      if (b.dataset.themePick) {
+        /* let the topbar's theme button do the switching, so its icon stays right */
+        var btn = document.getElementById("durf-theme-btn"), want = b.dataset.themePick;
+        for (var i = 0; i < 3 && themeStored() !== want; i++) {
+          if (btn) btn.click();
+          else {
+            try { if (want === "auto") localStorage.removeItem("durf-theme"); else localStorage.setItem("durf-theme", want); } catch (x) {}
+            if (want === "auto") root.removeAttribute("data-theme"); else root.setAttribute("data-theme", want);
+          }
+        }
+      }
+      paintSettings(dlg);
+    });
+  })();
+
   function full() { if (document.fullscreenElement) document.exitFullscreen(); else root.requestFullscreen && root.requestFullscreen(); }
 
   function key(k, e) {
@@ -229,7 +269,7 @@
   /* keys pressed inside an embedded DURF page come back as messages (design system 1.1.10) */
   window.addEventListener("message", function (e) { if (e.data && e.data.type === "durf-embed-key") key(e.data.key); });
   $$(".deck-ui [data-go]").forEach(function (b) {
-    b.addEventListener("click", function () { ({ prev: prev, next: next, full: full, nav: overview })[b.dataset.go](); b.blur(); });
+    b.addEventListener("click", function () { ({ prev: prev, next: next, full: full, nav: overview, settings: settings })[b.dataset.go](); b.blur(); });
   });
   window.addEventListener("resize", scale);
   /* a typed or linked #number jumps to that slide */
