@@ -17,6 +17,7 @@ The page uses the [DURF design system](https://durf-project.github.io/durf-desig
 | F | full screen |
 | O, or the ▦ button | overview of all slides as thumbnails, grouped by the parts of the programme; click one to go there |
 | D | on a quiz question: add demo answers (demo mode only) |
+| ⚙ button (bottom right) | settings: number of quiz answers, **Download results** (CSV), **Reset answers**, and the theme (light, dark, system) |
 | Shift+R | on a quiz question or leaderboard: clear all answers and scores in this browser |
 
 The DURF topbar at the top has the theme button (light, dark, system); in full screen it is hidden.
@@ -54,6 +55,10 @@ Write the questions in `quiz/questions.md`:
 ```
 
 Add a line `theme: 4` under a question to show that theme's puzzle piece, number and colour.
+`theme: 0` (warm-up) and `theme: 7` (closing question) show the DURF logo instead.
+
+Each question is open for 30 seconds (`QUIZ_SECONDS` in `config.js`). A countdown runs on the
+slide and on the phones; after that nobody can answer.
 
 Every question gets a slide. On the slide the bars start at 0 and the count of answers runs at the
 bottom right. Next click: the bars fill. Next click: the right answer is highlighted, and every

@@ -5,7 +5,8 @@
   How to write a question:
   - Start it with "### " and the question.
   - Optionally a line "theme: 4" under it: the slide then shows that theme's puzzle piece,
-    number, name and colour.
+    number, name and colour. "theme: 0" (a warm-up) and "theme: 7" (a closing question) are not
+    DURF themes: those slides show the DURF logo.
   - Give the choices as list items: "- [x] " for the right answer, "- [ ] " for the others.
     Exactly one right answer per question. Plain "- " also counts as a wrong answer.
   - Keep choices short: they are bars on the slide.
@@ -16,10 +17,21 @@
   - leaderboards come after question 1, after the one but last question, and the final
     score after the last question.
 
-  Sources: 1 the commons section of the position paper; 2 the key figures on the project page;
+  Every question is open for 30 seconds (QUIZ_SECONDS in config.js).
+
+  Questions by John Doove, with: 1 the commons section of the position paper; 2 WISH, EduStandaard;
   3 the full text section of the position paper; 4 KB (Ingeborg's list for theme 4);
-  5 signposting.org; 6 the Dutch Scholarly Communication Corpus.
+  5 the theme 5 activities in the DURF roadmap; 6 the Dutch Scholarly Communication Corpus.
 -->
+
+### Easy one to get things started: what does the acronym DURF stand for?
+
+theme: 0
+
+- [ ] Dutch University Repository Foundation
+- [x] DUtch Repository Federation
+- [ ] Digital University Repositories Federated
+- [ ] Designing Upgraded Repositories for the Future
 
 ### Who wrote "Governing the Commons", with eight design principles for shared resources?
 
@@ -30,14 +42,14 @@ theme: 1
 - [ ] Mariana Mazzucato
 - [ ] Yochai Benkler
 
-### How many of the 86 Dutch repositories and CRIS systems in OpenAIRE meet the current guidelines?
+### The WISH working group manages the metadata standards for literature repositories at EduStandaard.nl. What does WISH stand for?
 
 theme: 2
 
-- [ ] 8
-- [x] 22
-- [ ] 51
-- [ ] All 86
+- [ ] Werkgroep Interoperabiliteit Standaarden Hoger onderwijs
+- [ ] Working group on Institutional Scholarly Harvesting
+- [x] Werkgroep Infrastructuur surf-SHare
+- [ ] Werkgroep Informatievoorziening Samenwerkende Hogescholen
 
 ### For what share of the records in our repositories and CRIS systems do we hold no copy of the full text ourselves?
 
@@ -57,14 +69,14 @@ theme: 4
 - [ ] Netherlands Bibliographic Network
 - [ ] National Book Number
 
-### Signposting helps machines find the files and metadata behind a landing page. How?
+### Theme 5 wants repository content to be found better on other platforms. Which activity is NOT part of the plan?
 
 theme: 5
 
-- [ ] With a robots.txt file
-- [x] With typed links in the HTTP header or the HTML
-- [ ] With an OAI-PMH set per publication
-- [ ] With a QR code on the PDF
+- [ ] Guidelines for OpenAlex, WorldCat and Google Scholar
+- [ ] DOIs for grey literature in repositories
+- [x] A new Dutch search engine for scholarly output
+- [ ] A dashboard of our visibility in the major indexes
 
 ### How many published works are in the Dutch Scholarly Communication Corpus?
 
@@ -74,3 +86,12 @@ theme: 6
 - [ ] About 1 million
 - [x] About 3.4 million
 - [ ] About 10 million
+
+### We are going full circle from DARE to DURF. What did DARE stand for?
+
+theme: 7
+
+- [ ] Digital Access to REsources
+- [ ] Delivering Academic REpositories
+- [ ] Digitising Academic REsources
+- [x] Digital Academic REpositories

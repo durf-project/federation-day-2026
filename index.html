@@ -37,20 +37,6 @@
   </section>
 
   <!-- 12:45 Opening -->
-  <section class="slide" id="agenda" data-agenda="opening">
-    <p class="eyebrow">Programme</p>
-    <h2>This afternoon</h2>
-    <ol class="agenda">
-      <li data-a="lunch"><time>12:00 – 12:45</time><span>Lunch</span></li>
-      <li data-a="opening"><time>12:45 – 13:05</time><span>Opening by host <b>John Doove</b></span></li>
-      <li data-a="hilde"><time>13:05 – 13:25</time><span>The strategic importance of DURF, <b>Hilde van Wijngaarden</b></span></li>
-      <li data-a="maurice"><time>13:25 – 13:45</time><span>The DURF project plan and why we need to work together, <b>Maurice Vanderfeesten</b></span></li>
-      <li data-a="carousel"><time>13:45 – 15:15</time><span>Deep dive into the six DURF work packages: <b>interactive carousel</b></span></li>
-      <li data-a="keynote"><time>15:15 – 16:00</time><span>Keynote <b>Jeroen Bosman</b>: “Resilience of open science and the research commons in times of crisis”</span></li>
-      <li data-a="drinks"><time>16:00 – 17:00</time><span>Drinks</span></li>
-    </ol>
-  </section>
-
   <section class="slide slide--speaker" id="john" data-agenda="opening">
     <div class="speaker">
       <span class="face face--xl" data-person="John Doove" style="--ring:var(--durf-theme-3)"></span>
@@ -60,6 +46,21 @@
         <p class="role">SURF · host of the day · DURF steering group</p>
       </div>
     </div>
+  </section>
+
+  <section class="slide" id="agenda" data-agenda="opening">
+    <p class="eyebrow">Programme</p>
+    <h2>This afternoon</h2>
+    <ol class="agenda">
+      <li data-a="lunch"><time>12:00 – 12:45</time><span>Lunch</span></li>
+      <li data-a="opening"><time>12:45 – 13:05</time><span>Opening by host <b>John Doove</b></span></li>
+      <li data-a="hilde"><time>13:05 – 13:25</time><span>The strategic importance of DURF, <b>Hilde van Wijngaarden</b></span></li>
+      <li data-a="maurice"><time>13:25 – 13:40</time><span>The DURF project plan and why we need to work together, <b>Maurice Vanderfeesten</b></span></li>
+      <li data-a="break"><time>13:40 – 13:45</time><span>Coffee break</span></li>
+      <li data-a="carousel"><time>13:45 – 15:15</time><span>Deep dive into the six DURF work packages: <b>interactive carousel</b></span></li>
+      <li data-a="keynote"><time>15:15 – 16:00</time><span>Keynote <b>Jeroen Bosman</b>: “Resilience of open science and the research commons in times of crisis”</span></li>
+      <li data-a="drinks"><time>16:00 – 17:00</time><span>Drinks</span></li>
+    </ol>
   </section>
 
   <section class="slide" id="quiz-intro" data-kind="quizintro" data-agenda="opening">
@@ -185,6 +186,7 @@
 </main>
 
 <nav class="deck-ui" aria-label="Slides">
+  <button type="button" data-go="settings" aria-label="Settings" title="Settings: quiz answers and theme"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
   <button type="button" data-go="prev" aria-label="Previous">‹</button>
   <span class="deck-count" aria-live="off"></span>
   <button type="button" data-go="next" aria-label="Next">›</button>
@@ -197,6 +199,27 @@
   <form method="dialog">
     <header><h2 id="deck-nav-title">All slides</h2><button type="submit" class="outline" aria-label="Close">Close</button></header>
     <div class="deck-nav__body"></div>
+  </form>
+</dialog>
+<!-- Settings: quiz answers (count, download, reset) and the colour theme -->
+<dialog id="deck-settings" class="deck-nav deck-settings" aria-labelledby="deck-settings-title">
+  <form method="dialog">
+    <header><h2 id="deck-settings-title">Settings</h2><button type="submit" class="outline" aria-label="Close">Close</button></header>
+    <div class="deck-nav__body">
+      <h3>Pub quiz</h3>
+      <p data-quiz-summary></p>
+      <p class="deck-settings__row">
+        <button type="button" data-quiz-download>Download results</button>
+        <button type="button" class="outline deck-settings__danger" data-quiz-reset>Reset answers</button>
+      </p>
+      <p class="deck-settings__hint">Results are kept in this browser only. Download them before you reset.</p>
+      <h3>Theme</h3>
+      <p class="deck-settings__row" role="group" aria-label="Theme">
+        <button type="button" class="outline" data-theme-pick="light">Light</button>
+        <button type="button" class="outline" data-theme-pick="dark">Dark</button>
+        <button type="button" class="outline" data-theme-pick="auto">System</button>
+      </p>
+    </div>
   </form>
 </dialog>
 <div class="deck-progress" aria-hidden="true"><i></i></div>
