@@ -21,7 +21,7 @@
 
   Questions by John Doove, with: 1 the commons section of the position paper; 2 WISH, EduStandaard;
   3 the full text section of the position paper; 4 KB (Ingeborg's list for theme 4);
-  5 the theme 5 activities in the DURF roadmap; 6 the Dutch Scholarly Communication Corpus.
+  5 the theme 5 activities in the DURF roadmap; 6 the Dutch Scholarly Knowledge Corpus.
 -->
 
 ### Easy one to get things started: what does the acronym DURF stand for?
@@ -78,7 +78,7 @@ theme: 5
 - [x] A new Dutch search engine for scholarly output
 - [ ] A dashboard of our visibility in the major indexes
 
-### How many published works are in the Dutch Scholarly Communication Corpus?
+### How many published works are in the Dutch Scholarly Knowledge Corpus?
 
 theme: 6
 
